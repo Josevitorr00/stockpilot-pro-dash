@@ -1,15 +1,13 @@
 import type { DashboardData, Product, RecentSale, SalePoint } from "@/types/business";
 
-const WEEK_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-
 const salesSeries: SalePoint[] = [
-  { date: "2026-07-27", label: WEEK_LABELS[0], revenue: 4280.5, orders: 38 },
-  { date: "2026-07-28", label: WEEK_LABELS[1], revenue: 3915.9, orders: 34 },
-  { date: "2026-07-29", label: WEEK_LABELS[2], revenue: 5120.4, orders: 46 },
-  { date: "2026-07-30", label: WEEK_LABELS[3], revenue: 4680.2, orders: 41 },
-  { date: "2026-07-31", label: WEEK_LABELS[4], revenue: 6890.75, orders: 58 },
-  { date: "2026-08-01", label: WEEK_LABELS[5], revenue: 7940.3, orders: 66 },
-  { date: "2026-08-02", label: WEEK_LABELS[6], revenue: 5210.6, orders: 44 },
+  { date: "2026-07-27", label: "Seg", revenue: 4280.5, orders: 38 },
+  { date: "2026-07-28", label: "Ter", revenue: 3915.9, orders: 34 },
+  { date: "2026-07-29", label: "Qua", revenue: 5120.4, orders: 46 },
+  { date: "2026-07-30", label: "Qui", revenue: 4680.2, orders: 41 },
+  { date: "2026-07-31", label: "Sex", revenue: 6890.75, orders: 58 },
+  { date: "2026-08-01", label: "Sáb", revenue: 7940.3, orders: 66 },
+  { date: "2026-08-02", label: "Dom", revenue: 5210.6, orders: 44 },
 ];
 
 const lowStock: Product[] = [
