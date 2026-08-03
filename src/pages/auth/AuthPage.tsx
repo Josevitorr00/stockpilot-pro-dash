@@ -32,15 +32,21 @@ export function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+    const form = new FormData(event.currentTarget);
+    const data = {
+      email: String(form.get("email") ?? ""),
+      password: String(form.get("password") ?? ""),
+      name: String(form.get("name") ?? ""),
+      company: String(form.get("company") ?? ""),
+    };
     const nextErrors: Record<string, string> = {};
 
-    if (!data.email?.includes("@")) nextErrors.email = "Informe um e-mail válido.";
-    if (mode !== "forgot" && (data.password?.length ?? 0) < 6)
+    if (!data.email.includes("@")) nextErrors.email = "Informe um e-mail válido.";
+    if (mode !== "forgot" && data.password.length < 6)
       nextErrors.password = "A senha deve ter ao menos 6 caracteres.";
     if (mode === "signup") {
-      if (!data.name?.trim()) nextErrors.name = "Informe seu nome.";
-      if (!data.company?.trim()) nextErrors.company = "Informe o nome do comércio.";
+      if (!data.name.trim()) nextErrors.name = "Informe seu nome.";
+      if (!data.company.trim()) nextErrors.company = "Informe o nome do comércio.";
     }
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
@@ -251,7 +257,7 @@ export function AuthPage() {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-sm font-medium">{label}</Label>
