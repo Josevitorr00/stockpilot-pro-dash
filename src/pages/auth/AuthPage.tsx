@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 
 type Mode = "login" | "signup" | "forgot";
 
+type FieldErrors = { email?: string; password?: string; name?: string; company?: string };
+
 const highlights = [
   { icon: TrendingUp, title: "Visão financeira", text: "Receitas, despesas e lucro em tempo real." },
   { icon: Boxes, title: "Estoque sob controle", text: "Alertas automáticos de estoque baixo." },
@@ -25,7 +27,7 @@ const highlights = [
 export function AuthPage() {
   const [mode, setMode] = useState<Mode>("login");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [remember, setRemember] = useState(true);
   const { login, register, recoverPassword } = useAuth();
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ export function AuthPage() {
       name: String(form.get("name") ?? ""),
       company: String(form.get("company") ?? ""),
     };
-    const nextErrors: Record<string, string> = {};
+    const nextErrors: FieldErrors = {};
 
     if (!data.email.includes("@")) nextErrors.email = "Informe um e-mail válido.";
     if (mode !== "forgot" && data.password.length < 6)
