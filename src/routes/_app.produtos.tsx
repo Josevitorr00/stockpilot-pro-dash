@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Package } from "lucide-react";
-import { PagePlaceholder } from "@/components/layout/PagePlaceholder";
+import { ProductsPage } from "@/pages/produtos/ProductsPage";
 
 export const Route = createFileRoute("/_app/produtos")({
   head: () => ({
@@ -11,12 +10,5 @@ export const Route = createFileRoute("/_app/produtos")({
       { property: "og:description", content: "Cadastro, catálogo e preços dos seus produtos." },
     ],
   }),
-  component: () => (
-    <PagePlaceholder
-      icon={Package}
-      title="Produtos"
-      description="Listagem, cadastro, edição e categorias de produtos."
-      step="Conteúdo na etapa 4"
-    />
-  ),
+  component: ProductsPage,
 });
