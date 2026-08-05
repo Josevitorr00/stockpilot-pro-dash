@@ -35,6 +35,28 @@ export interface CategoryShare {
   revenue: number;
 }
 
+export type PaymentMethod = "Dinheiro" | "Pix" | "Cartão" | "Fiado";
+
+export interface SaleItem {
+  productId: string;
+  name: string;
+  sku: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Sale {
+  id: string;
+  customer: string;
+  items: SaleItem[];
+  subtotal: number;
+  discount: number;
+  total: number;
+  method: PaymentMethod;
+  status: "Concluída" | "Cancelada";
+  createdAt: string;
+}
+
 export interface RecentSale {
   id: string;
   customer: string;
