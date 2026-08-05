@@ -56,3 +56,17 @@ export async function deleteProduct(id: string): Promise<void> {
   await delay(200);
   products = products.filter((product) => product.id !== id);
 }
+
+export function getProductsSync(): Product[] {
+  return products.map((product) => ({ ...product }));
+}
+
+export function applyStockChange(id: string, nextStock: number): Product | undefined {
+  let updated: Product | undefined;
+  products = products.map((product) => {
+    if (product.id !== id) return product;
+    updated = { ...product, stock: nextStock };
+    return updated;
+  });
+  return updated;
+}
