@@ -46,9 +46,9 @@ export function CartPanel({
   const total = Math.max(subtotal - discount, 0);
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex flex-col gap-4">
       {items.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-10 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
           <ShoppingCart className="size-8 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             Carrinho vazio. Selecione produtos para iniciar a venda.

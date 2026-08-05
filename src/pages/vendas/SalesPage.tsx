@@ -208,7 +208,7 @@ export function SalesPage() {
           )}
         </SectionCard>
 
-        <SectionCard title="Carrinho" description="Resumo da venda atual.">
+        <SectionCard title="Carrinho" description="Resumo da venda atual." className="h-fit">
           <CartPanel
             items={items}
             customer={customer}
