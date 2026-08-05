@@ -1,22 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Boxes } from "lucide-react";
-import { PagePlaceholder } from "@/components/layout/PagePlaceholder";
+import { StockPage } from "@/pages/estoque/StockPage";
 
 export const Route = createFileRoute("/_app/estoque")({
   head: () => ({
     meta: [
       { title: "Estoque — StockPilot" },
-      { name: "description", content: "Entradas, saídas e níveis de estoque em tempo real." },
+      { name: "description", content: "Entradas, saídas, ajustes e alertas de estoque mínimo." },
       { property: "og:title", content: "Estoque — StockPilot" },
-      { property: "og:description", content: "Entradas, saídas e níveis de estoque." },
+      { property: "og:description", content: "Controle de movimentações e níveis de estoque." },
     ],
   }),
-  component: () => (
-    <PagePlaceholder
-      icon={Boxes}
-      title="Estoque"
-      description="Movimentações, ajustes e alertas de estoque mínimo."
-      step="Conteúdo na etapa 5"
-    />
-  ),
+  component: StockPage,
 });
