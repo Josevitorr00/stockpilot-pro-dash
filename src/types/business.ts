@@ -16,6 +16,27 @@ export interface SalePoint {
   orders: number;
 }
 
+export type StockMovementType = "entrada" | "saida" | "ajuste";
+
+export interface StockMovement {
+  id: string;
+  productId: string;
+  productName: string;
+  sku: string;
+  type: StockMovementType;
+  quantity: number;
+  resultingStock: number;
+  reason: string;
+  createdAt: string;
+}
+
+interface SalePointLegacy {
+  date: string;
+  label: string;
+  revenue: number;
+  orders: number;
+}
+
 export interface CategoryShare {
   category: string;
   revenue: number;
