@@ -30,13 +30,6 @@ export interface StockMovement {
   createdAt: string;
 }
 
-interface SalePointLegacy {
-  date: string;
-  label: string;
-  revenue: number;
-  orders: number;
-}
-
 export interface CategoryShare {
   category: string;
   revenue: number;
