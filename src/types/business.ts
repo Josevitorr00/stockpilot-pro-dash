@@ -67,6 +67,27 @@ export interface RecentSale {
   createdAt: string;
 }
 
+export type CustomerType = "Pessoa física" | "Pessoa jurídica";
+
+export interface Customer {
+  id: string;
+  name: string;
+  type: CustomerType;
+  document: string;
+  phone: string;
+  email: string;
+  city: string;
+  notes: string;
+  createdAt: string;
+}
+
+export interface CustomerStats {
+  orders: number;
+  revenue: number;
+  averageTicket: number;
+  lastPurchase: string | null;
+}
+
 export interface DashboardMetrics {
   revenueToday: number;
   revenueTrend: number;
