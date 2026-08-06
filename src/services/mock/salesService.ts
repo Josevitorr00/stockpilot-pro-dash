@@ -148,3 +148,7 @@ export async function cancelSale(id: string): Promise<Sale> {
   }
   return cancelled;
 }
+
+export function getSalesSync(): Sale[] {
+  return sales.map((sale) => ({ ...sale, items: sale.items.map((item) => ({ ...item })) }));
+}
