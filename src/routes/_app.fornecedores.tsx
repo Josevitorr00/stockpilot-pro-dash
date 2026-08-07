@@ -1,22 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Truck } from "lucide-react";
-import { PagePlaceholder } from "@/components/layout/PagePlaceholder";
+import { SuppliersPage } from "@/pages/fornecedores/SuppliersPage";
 
 export const Route = createFileRoute("/_app/fornecedores")({
   head: () => ({
     meta: [
       { title: "Fornecedores — StockPilot" },
-      { name: "description", content: "Parceiros, contatos e condições de compra." },
+      {
+        name: "description",
+        content:
+          "Cadastro de fornecedores com contatos, categorias fornecidas, prazos de entrega e sugestões de compra.",
+      },
       { property: "og:title", content: "Fornecedores — StockPilot" },
       { property: "og:description", content: "Parceiros e condições de compra." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => (
-    <PagePlaceholder
-      icon={Truck}
-      title="Fornecedores"
-      description="Cadastro de fornecedores, produtos fornecidos e contatos."
-      step="Conteúdo na etapa 8"
-    />
-  ),
+  component: SuppliersPage,
 });
