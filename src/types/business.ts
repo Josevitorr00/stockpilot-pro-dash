@@ -88,6 +88,24 @@ export interface CustomerStats {
   lastPurchase: string | null;
 }
 
+export type SupplierStatus = "Ativo" | "Inativo";
+
+export interface Supplier {
+  id: string;
+  name: string;
+  document: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  city: string;
+  categories: string[];
+  paymentTerms: string;
+  leadTimeDays: number;
+  status: SupplierStatus;
+  notes: string;
+  createdAt: string;
+}
+
 export interface DashboardMetrics {
   revenueToday: number;
   revenueTrend: number;
