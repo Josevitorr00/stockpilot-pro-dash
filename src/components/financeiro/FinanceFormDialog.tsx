@@ -95,7 +95,7 @@ export function FinanceFormDialog({
     setForm((prev) => ({
       ...prev,
       type,
-      category: type === "receita" ? revenueCategories[0] : expenseCategories[0],
+      category: type === "receita" ? "Vendas" : "Fornecedores",
     }));
   }
 
