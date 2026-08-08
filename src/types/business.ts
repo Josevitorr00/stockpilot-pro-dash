@@ -117,6 +117,24 @@ export interface DashboardMetrics {
   stockTrend: number;
 }
 
+export type FinanceType = "receita" | "despesa";
+export type FinanceStatus = "Pago" | "Pendente";
+
+export interface FinanceEntry {
+  id: string;
+  description: string;
+  type: FinanceType;
+  category: string;
+  amount: number;
+  dueDate: string;
+  paidAt: string | null;
+  status: FinanceStatus;
+  method: string;
+  counterparty: string;
+  notes: string;
+  createdAt: string;
+}
+
 export interface DashboardData {
   metrics: DashboardMetrics;
   salesSeries: SalePoint[];
