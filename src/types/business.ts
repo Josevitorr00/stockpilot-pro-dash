@@ -135,17 +135,6 @@ export interface FinanceEntry {
   createdAt: string;
 }
 
-interface DashboardMetricsLegacy {
-  revenueToday: number;
-  revenueTrend: number;
-  ordersToday: number;
-  ordersTrend: number;
-  averageTicket: number;
-  averageTicketTrend: number;
-  stockValue: number;
-  stockTrend: number;
-}
-
 export interface DashboardData {
   metrics: DashboardMetrics;
   salesSeries: SalePoint[];
