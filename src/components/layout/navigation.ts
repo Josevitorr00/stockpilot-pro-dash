@@ -85,12 +85,6 @@ export const navGroups: NavGroup[] = [
         description: "Contas a pagar, a receber e fluxo de caixa.",
       },
       {
-        title: "Relatórios",
-        url: "/relatorios",
-        icon: BarChart3,
-        description: "Análises de vendas, estoque e resultados.",
-      },
-      {
         title: "Configurações",
         url: "/configuracoes",
         icon: Settings,
