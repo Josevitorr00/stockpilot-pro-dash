@@ -6,7 +6,6 @@ import {
   Users,
   Truck,
   Wallet,
-  BarChart3,
   Settings,
   type LucideIcon,
 } from "lucide-react";

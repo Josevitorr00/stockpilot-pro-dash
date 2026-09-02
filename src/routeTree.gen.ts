@@ -18,7 +18,6 @@ import { Route as AppEstoqueRouteImport } from './routes/_app.estoque'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppProdutosRouteImport } from './routes/_app.produtos'
-import { Route as AppRelatoriosRouteImport } from './routes/_app.relatorios'
 import { Route as AppVendasRouteImport } from './routes/_app.vendas'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,11 +64,6 @@ const AppProdutosRoute = AppProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AppRoute,
 } as any)
-const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
-  id: '/relatorios',
-  path: '/relatorios',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppVendasRoute = AppVendasRouteImport.update({
   id: '/vendas',
   path: '/vendas',
@@ -85,7 +79,6 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/produtos': typeof AppProdutosRoute
-  '/relatorios': typeof AppRelatoriosRoute
   '/vendas': typeof AppVendasRoute
 }
 export interface FileRoutesByTo {
@@ -97,7 +90,6 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
   '/produtos': typeof AppProdutosRoute
-  '/relatorios': typeof AppRelatoriosRoute
   '/vendas': typeof AppVendasRoute
 }
 export interface FileRoutesById {
@@ -111,7 +103,6 @@ export interface FileRoutesById {
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/produtos': typeof AppProdutosRoute
-  '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/vendas': typeof AppVendasRoute
 }
 export interface FileRouteTypes {
@@ -125,7 +116,6 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/fornecedores'
     | '/produtos'
-    | '/relatorios'
     | '/vendas'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -137,7 +127,6 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/fornecedores'
     | '/produtos'
-    | '/relatorios'
     | '/vendas'
   id:
     | '__root__'
@@ -150,7 +139,6 @@ export interface FileRouteTypes {
     | '/_app/financeiro'
     | '/_app/fornecedores'
     | '/_app/produtos'
-    | '/_app/relatorios'
     | '/_app/vendas'
   fileRoutesById: FileRoutesById
 }
@@ -224,13 +212,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProdutosRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/relatorios': {
-      id: '/_app/relatorios'
-      path: '/relatorios'
-      fullPath: '/relatorios'
-      preLoaderRoute: typeof AppRelatoriosRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/vendas': {
       id: '/_app/vendas'
       path: '/vendas'
@@ -249,7 +230,6 @@ interface AppRouteChildren {
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppProdutosRoute: typeof AppProdutosRoute
-  AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppVendasRoute: typeof AppVendasRoute
 }
 
@@ -261,7 +241,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
   AppProdutosRoute: AppProdutosRoute,
-  AppRelatoriosRoute: AppRelatoriosRoute,
   AppVendasRoute: AppVendasRoute,
 }
 
