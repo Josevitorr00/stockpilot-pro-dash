@@ -1,6 +1,7 @@
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Bell, LogOut, Search, User } from "lucide-react";
+import { Bell, LogOut, PackageX, Search, User } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { getProducts } from "@/services/mock/productService";
 import { allNavItems } from "./navigation";
 
 function initials(name?: string | null) {
