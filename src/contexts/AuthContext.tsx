@@ -5,6 +5,7 @@ import {
   requestPasswordReset,
   signIn,
   signUp,
+  updateUserProfile,
 } from "@/services/mock/authService";
 import type { AuthSession, Credentials, SignUpPayload, User } from "@/types/auth";
 
@@ -16,6 +17,7 @@ interface AuthContextValue {
   login: (credentials: Credentials, remember?: boolean) => Promise<void>;
   register: (payload: SignUpPayload) => Promise<void>;
   recoverPassword: (email: string) => Promise<void>;
+  updateUser: (updates: Partial<Pick<User, "name" | "email" | "avatarUrl">>) => Promise<void>;
   logout: () => void;
 }
 
