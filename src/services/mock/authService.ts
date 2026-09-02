@@ -47,6 +47,23 @@ export async function requestPasswordReset(email: string): Promise<void> {
   if (!email.includes("@")) throw new Error("Informe um e-mail válido.");
 }
 
+export async function updateUserProfile(
+  updates: Partial<Pick<User, "name" | "email" | "avatarUrl">>,
+): Promise<User> {
+  await delay();
+  const session = readStoredSession();
+  if (!session) throw new Error("Sessão expirada. Faça login novamente.");
+  if (updates.name !== undefined && !updates.name.trim()) {
+    throw new Error("Informe o seu nome.");
+  }
+  if (updates.email !== undefined && !updates.email.includes("@")) {
+    throw new Error("Informe um e-mail válido.");
+  }
+  const user: User = { ...session.user, ...updates };
+  persistSession({ ...session, user });
+  return user;
+}
+
 export function readStoredSession(): AuthSession | null {
   if (typeof window === "undefined") return null;
   try {
