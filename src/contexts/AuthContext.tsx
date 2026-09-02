@@ -51,6 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await requestPasswordReset(email);
   }, []);
 
+  const updateUser = useCallback(async (updates: Partial<Pick<User, "name" | "email" | "avatarUrl">>) => {
+    const user = await updateUserProfile(updates);
+    setSession((current) => (current ? { ...current, user } : current));
+  }, []);
+
   const logout = useCallback(() => {
     persistSession(null);
     setSession(null);
@@ -65,9 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       recoverPassword,
+      updateUser,
       logout,
     }),
-    [session, isLoading, login, register, recoverPassword, logout],
+    [session, isLoading, login, register, recoverPassword, updateUser, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
