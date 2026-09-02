@@ -6,7 +6,6 @@ import {
   Users,
   Truck,
   Wallet,
-  BarChart3,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -83,12 +82,6 @@ export const navGroups: NavGroup[] = [
         url: "/financeiro",
         icon: Wallet,
         description: "Contas a pagar, a receber e fluxo de caixa.",
-      },
-      {
-        title: "Relatórios",
-        url: "/relatorios",
-        icon: BarChart3,
-        description: "Análises de vendas, estoque e resultados.",
       },
       {
         title: "Configurações",
