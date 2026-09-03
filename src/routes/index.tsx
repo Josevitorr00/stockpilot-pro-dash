@@ -8,12 +8,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Acesse o StockPilot: sistema de gestão comercial com estoque, vendas, financeiro e relatórios em um só painel.",
+          "Acesse o StockPilot: sistema de gestão comercial com estoque, vendas, clientes e financeiro em um só painel.",
       },
       { property: "og:title", content: "StockPilot — Controle Inteligente para o seu Comércio" },
       {
         property: "og:description",
-        content: "Gestão comercial completa para pequenos comércios: estoque, vendas, financeiro e relatórios.",
+        content: "Gestão comercial completa para pequenos comércios: estoque, vendas, clientes e financeiro.",
       },
     ],
   }),
