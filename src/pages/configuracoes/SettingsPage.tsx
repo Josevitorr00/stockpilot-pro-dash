@@ -166,7 +166,7 @@ export function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="empresa">
-          <SectionCard title="Dados da empresa" description="Informações usadas em relatórios e documentos.">
+          <SectionCard title="Dados da empresa" description="Informações cadastrais do seu negócio.">
             {isLoading || !company ? (
               <div className="grid gap-4 sm:grid-cols-2">
                 {Array.from({ length: 6 }).map((_, i) => (

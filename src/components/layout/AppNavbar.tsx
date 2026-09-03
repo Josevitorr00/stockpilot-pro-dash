@@ -38,6 +38,12 @@ export function AppNavbar() {
     [pathname],
   );
 
+  const { data: products } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const lowStock = useMemo(
+    () => (products ?? []).filter((p) => p.stock < p.minStock),
+    [products],
+  );
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-card/80 px-3 backdrop-blur md:px-6">
       <SidebarTrigger className="text-muted-foreground" />
@@ -60,12 +66,51 @@ export function AppNavbar() {
         />
       </div>
 
-      <Button variant="ghost" size="icon" className="relative" aria-label="Notificações">
-        <Bell className="size-5" />
-        <Badge className="absolute -right-0.5 -top-0.5 size-4 justify-center rounded-full p-0 text-[10px]">
-          3
-        </Badge>
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="relative" aria-label="Notificações">
+            <Bell className="size-5" />
+            {lowStock.length > 0 && (
+              <Badge className="absolute -right-0.5 -top-0.5 size-4 justify-center rounded-full p-0 text-[10px]">
+                {lowStock.length}
+              </Badge>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-80">
+          <DropdownMenuLabel>Alertas de estoque</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {lowStock.length === 0 ? (
+            <p className="px-2 py-3 text-xs text-muted-foreground">
+              Nenhum produto abaixo do estoque mínimo.
+            </p>
+          ) : (
+            <>
+              {lowStock.slice(0, 5).map((p) => (
+                <DropdownMenuItem key={p.id} asChild>
+                  <Link to="/estoque" className="flex items-center gap-2">
+                    <PackageX className="size-4 shrink-0 text-destructive" />
+                    <span className="min-w-0 flex-1 truncate">{p.name}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {p.stock}/{p.minStock}
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              {lowStock.length > 5 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/estoque" className="justify-center text-xs text-primary">
+                      Ver todos ({lowStock.length})
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
