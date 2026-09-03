@@ -38,6 +38,12 @@ export function AppNavbar() {
     [pathname],
   );
 
+  const { data: products } = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const lowStock = useMemo(
+    () => (products ?? []).filter((p) => p.stock < p.minStock),
+    [products],
+  );
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-card/80 px-3 backdrop-blur md:px-6">
       <SidebarTrigger className="text-muted-foreground" />
