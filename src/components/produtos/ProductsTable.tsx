@@ -35,7 +35,7 @@ export function ProductsTable({ products, onEdit, onDelete }: ProductsTableProps
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[540px]">
         <TableHeader>
           <TableRow>
             <TableHead>Produto</TableHead>

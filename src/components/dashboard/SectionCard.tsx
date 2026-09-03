@@ -13,7 +13,7 @@ export function SectionCard({ title, description, action, className, children }:
   return (
     <section
       className={cn(
-        "rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]",
+        "min-w-0 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]",
         className,
       )}
     >

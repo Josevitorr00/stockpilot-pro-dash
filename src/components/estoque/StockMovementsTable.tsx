@@ -40,7 +40,7 @@ export function StockMovementsTable({ movements }: { movements: StockMovement[] 
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[560px]">
         <TableHeader>
           <TableRow>
             <TableHead>Produto</TableHead>

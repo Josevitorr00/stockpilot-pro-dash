@@ -27,7 +27,7 @@ export function SalesHistoryTable({ sales, onCancel }: SalesHistoryTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[520px]">
         <TableHeader>
           <TableRow>
             <TableHead>Venda</TableHead>
