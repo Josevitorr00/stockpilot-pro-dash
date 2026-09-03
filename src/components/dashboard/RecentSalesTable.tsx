@@ -19,7 +19,7 @@ const statusVariant: Record<RecentSale["status"], "default" | "secondary" | "des
 export function RecentSalesTable({ sales }: { sales: RecentSale[] }) {
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[480px]">
         <TableHeader>
           <TableRow>
             <TableHead>Venda</TableHead>

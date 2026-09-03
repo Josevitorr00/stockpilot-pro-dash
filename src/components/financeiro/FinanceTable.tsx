@@ -39,7 +39,7 @@ export function FinanceTable({ entries, onEdit, onDelete, onToggleStatus }: Fina
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[620px]">
         <TableHeader>
           <TableRow>
             <TableHead>Lançamento</TableHead>

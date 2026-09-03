@@ -29,7 +29,7 @@ export function SuppliersTable({ suppliers, onEdit, onDelete }: SuppliersTablePr
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[600px]">
         <TableHeader>
           <TableRow>
             <TableHead>Fornecedor</TableHead>

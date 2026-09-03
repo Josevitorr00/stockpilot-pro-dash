@@ -34,7 +34,7 @@ export function CustomersTable({ customers, onEdit, onDelete }: CustomersTablePr
 
   return (
     <div className="overflow-x-auto">
-      <Table>
+      <Table className="min-w-[560px]">
         <TableHeader>
           <TableRow>
             <TableHead>Cliente</TableHead>
