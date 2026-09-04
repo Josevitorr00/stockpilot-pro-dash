@@ -17,6 +17,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { getProducts } from "@/services/mock/productService";
+import { ThemeToggle } from "./ThemeToggle";
 import { allNavItems } from "./navigation";
 
 function initials(name?: string | null) {
@@ -65,6 +66,8 @@ export function AppNavbar() {
           aria-label="Buscar no sistema"
         />
       </div>
+
+      <ThemeToggle />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
