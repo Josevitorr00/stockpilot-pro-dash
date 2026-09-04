@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Boxes, Loader2, LockKeyhole, Mail, ShieldCheck, TrendingUp, User2 } from "lucide-react";
+import { ArrowLeft, Boxes, Loader2, Mail, ShieldCheck, TrendingUp, User2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AuthPanel } from "@/components/auth/AuthCard";
@@ -11,12 +11,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { DEMO_CREDENTIALS } from "@/services/mock/authService";
 import { cn } from "@/lib/utils";
 
 type Mode = "login" | "signup" | "forgot";
 
-type FieldErrors = { email?: string; password?: string; name?: string; company?: string };
+type FieldErrors = {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  name?: string;
+  company?: string;
+};
 
 const highlights = [
   { icon: TrendingUp, title: "Visão financeira", text: "Receitas, despesas e lucro em tempo real." },
@@ -38,6 +43,7 @@ export function AuthPage() {
     const data = {
       email: String(form.get("email") ?? ""),
       password: String(form.get("password") ?? ""),
+      confirmPassword: String(form.get("confirmPassword") ?? ""),
       name: String(form.get("name") ?? ""),
       company: String(form.get("company") ?? ""),
     };
@@ -47,6 +53,7 @@ export function AuthPage() {
     if (mode !== "forgot" && data.password.length < 6)
       nextErrors.password = "A senha deve ter ao menos 6 caracteres.";
     if (mode === "signup") {
+      if (data.confirmPassword !== data.password) nextErrors.confirmPassword = "As senhas não coincidem.";
       if (!data.name.trim()) nextErrors.name = "Informe seu nome.";
       if (!data.company.trim()) nextErrors.company = "Informe o nome do comércio.";
     }
@@ -60,14 +67,19 @@ export function AuthPage() {
         toast.success("Bem-vindo de volta!", { description: "Acesso liberado ao StockPilot." });
         navigate({ to: "/dashboard" });
       } else if (mode === "signup") {
-        await register({
+        const signedIn = await register({
           email: data.email,
           password: data.password,
           name: data.name,
           company: data.company,
         });
-        toast.success("Conta criada com sucesso!", { description: "Sua área já está pronta." });
-        navigate({ to: "/dashboard" });
+        if (signedIn) {
+          toast.success("Conta criada com sucesso!", { description: "Sua área já está pronta." });
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("Conta criada!", { description: "Confirme seu e-mail para entrar." });
+          setMode("login");
+        }
       } else {
         await recoverPassword(data.email);
         toast.success("Link de recuperação enviado", {
@@ -76,8 +88,9 @@ export function AuthPage() {
         setMode("login");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível continuar.");
-      setErrors({ password: "Credenciais incorretas." });
+      const message = error instanceof Error ? error.message : "Não foi possível continuar.";
+      toast.error(message);
+      if (mode === "login") setErrors({ password: message });
     } finally {
       setLoading(false);
     }
@@ -189,7 +202,6 @@ export function AuthPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="voce@comercio.com"
-                      defaultValue={mode === "login" ? DEMO_CREDENTIALS.email : ""}
                       className={cn("h-11 pl-9", errors.email && "border-destructive")}
                     />
                   </div>
@@ -201,8 +213,18 @@ export function AuthPage() {
                       name="password"
                       placeholder="••••••"
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
-                      defaultValue={mode === "login" ? DEMO_CREDENTIALS.password : ""}
                       invalid={Boolean(errors.password)}
+                    />
+                  </Field>
+                )}
+
+                {mode === "signup" && (
+                  <Field label="Confirmar senha" error={errors.confirmPassword}>
+                    <PasswordInput
+                      name="confirmPassword"
+                      placeholder="••••••"
+                      autoComplete="new-password"
+                      invalid={Boolean(errors.confirmPassword)}
                     />
                   </Field>
                 )}
@@ -232,14 +254,6 @@ export function AuthPage() {
 
             {mode === "login" && (
               <>
-                <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/60 p-3 text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-                    <LockKeyhole className="size-3.5" /> Acesso demonstrativo
-                  </span>
-                  <p className="mt-1">
-                    {DEMO_CREDENTIALS.email} · senha {DEMO_CREDENTIALS.password}
-                  </p>
-                </div>
                 <p className="mt-6 text-center text-sm text-muted-foreground">
                   Não tem conta?{" "}
                   <button
