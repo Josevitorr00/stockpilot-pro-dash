@@ -1,12 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
-  persistSession,
-  readStoredSession,
+  REMEMBER_STORAGE_KEY,
+  buildSession,
+  getCurrentSession,
   requestPasswordReset,
   signIn,
+  signOutUser,
   signUp,
   updateUserProfile,
-} from "@/services/mock/authService";
+} from "@/services/authService";
+import { supabase } from "@/integrations/supabase/client";
 import type { AuthSession, Credentials, SignUpPayload, User } from "@/types/auth";
 
 interface AuthContextValue {
@@ -15,7 +18,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: Credentials, remember?: boolean) => Promise<void>;
-  register: (payload: SignUpPayload) => Promise<void>;
+  register: (payload: SignUpPayload) => Promise<boolean>;
   recoverPassword: (email: string) => Promise<void>;
   updateUser: (updates: Partial<Pick<User, "name" | "email" | "avatarUrl">>) => Promise<void>;
   logout: () => void;
@@ -28,23 +31,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setSession(readStoredSession());
-    setIsLoading(false);
+    let active = true;
+
+    getCurrentSession()
+      .then((next) => {
+        if (active) setSession(next);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    const { data } = supabase.auth.onAuthStateChange((event, supaSession) => {
+      if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") return;
+      if (!supaSession) {
+        setSession(null);
+        return;
+      }
+      void buildSession(supaSession).then((next) => {
+        if (active) setSession(next);
+      });
+    });
+
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   const login = useCallback(async (credentials: Credentials, remember = false) => {
     const next = await signIn(credentials);
-    persistSession(next);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("stockpilot:remember", remember ? credentials.email : "");
+      window.localStorage.setItem(REMEMBER_STORAGE_KEY, remember ? credentials.email : "");
     }
     setSession(next);
   }, []);
 
   const register = useCallback(async (payload: SignUpPayload) => {
     const next = await signUp(payload);
-    persistSession(next);
-    setSession(next);
+    if (next) {
+      setSession(next);
+      return true;
+    }
+    return false;
   }, []);
 
   const recoverPassword = useCallback(async (email: string) => {
@@ -57,8 +85,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    persistSession(null);
     setSession(null);
+    void signOutUser();
   }, []);
 
   const value = useMemo<AuthContextValue>(
