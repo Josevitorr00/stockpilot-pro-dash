@@ -67,7 +67,7 @@ export async function signUp({ email, password, name, company }: SignUpPayload):
     email: normalizedEmail,
     password,
     options: {
-      emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+      ...(typeof window !== "undefined" ? { emailRedirectTo: window.location.origin } : {}),
       data: { name: name.trim(), company: company.trim() },
     },
   });
@@ -85,9 +85,10 @@ export async function signOutUser(): Promise<void> {
 export async function requestPasswordReset(email: string): Promise<void> {
   const normalized = email.trim().toLowerCase();
   if (!normalized.includes("@")) throw new Error("Informe um e-mail válido.");
-  const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
-    redirectTo: typeof window !== "undefined" ? `${window.location.origin}/reset-password` : undefined,
-  });
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    normalized,
+    typeof window !== "undefined" ? { redirectTo: `${window.location.origin}/reset-password` } : {},
+  );
   if (error) throw new Error(translateError(error.message));
 }
 
@@ -106,9 +107,9 @@ export async function updateUserProfile(
     if (error) throw new Error(translateError(error.message));
   }
 
-  const profilePatch: Record<string, string> = {};
-  if (updates.name !== undefined) profilePatch['name'] = updates.name.trim();
-  if (updates.avatarUrl !== undefined) profilePatch['avatar_url'] = updates.avatarUrl;
+  const profilePatch: { name?: string; avatar_url?: string } = {};
+  if (updates.name !== undefined) profilePatch.name = updates.name.trim();
+  if (updates.avatarUrl !== undefined) profilePatch.avatar_url = updates.avatarUrl;
   if (Object.keys(profilePatch).length > 0) {
     const { error } = await supabase.from("profiles").update(profilePatch).eq("id", authUser.id);
     if (error) throw new Error(error.message);
