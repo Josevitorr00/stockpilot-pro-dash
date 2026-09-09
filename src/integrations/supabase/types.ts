@@ -14,6 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
+      customers: {
+        Row: {
+          city: string
+          created_at: string
+          document: string
+          email: string
+          id: string
+          name: string
+          notes: string
+          phone: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          document?: string
+          email?: string
+          id?: string
+          name: string
+          notes?: string
+          phone?: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          document?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string
+          phone?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      finance_entries: {
+        Row: {
+          amount: number
+          category: string
+          counterparty: string
+          created_at: string
+          description: string
+          due_date: string
+          id: string
+          method: string
+          notes: string
+          paid_at: string | null
+          status: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          category?: string
+          counterparty?: string
+          created_at?: string
+          description: string
+          due_date?: string
+          id?: string
+          method?: string
+          notes?: string
+          paid_at?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          counterparty?: string
+          created_at?: string
+          description?: string
+          due_date?: string
+          id?: string
+          method?: string
+          notes?: string
+          paid_at?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          cost: number
+          created_at: string
+          id: string
+          min_stock: number
+          name: string
+          price: number
+          sku: string
+          stock: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          cost?: number
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name: string
+          price?: number
+          sku?: string
+          stock?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          cost?: number
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name?: string
+          price?: number
+          sku?: string
+          stock?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -41,6 +176,176 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          code: string
+          created_at: string
+          customer: string
+          discount: number
+          id: string
+          items: Json
+          method: string
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          customer?: string
+          discount?: number
+          id?: string
+          items?: Json
+          method?: string
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          customer?: string
+          discount?: number
+          id?: string
+          items?: Json
+          method?: string
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          reason: string
+          resulting_stock: number
+          sku: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          reason?: string
+          resulting_stock?: number
+          sku?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          reason?: string
+          resulting_stock?: number
+          sku?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          categories: string[]
+          city: string
+          contact_name: string
+          created_at: string
+          document: string
+          email: string
+          id: string
+          lead_time_days: number
+          name: string
+          notes: string
+          payment_terms: string
+          phone: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories?: string[]
+          city?: string
+          contact_name?: string
+          created_at?: string
+          document?: string
+          email?: string
+          id?: string
+          lead_time_days?: number
+          name: string
+          notes?: string
+          payment_terms?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories?: string[]
+          city?: string
+          contact_name?: string
+          created_at?: string
+          document?: string
+          email?: string
+          id?: string
+          lead_time_days?: number
+          name?: string
+          notes?: string
+          payment_terms?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          company: Json
+          created_at: string
+          preferences: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company?: Json
+          created_at?: string
+          preferences?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: Json
+          created_at?: string
+          preferences?: Json
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
