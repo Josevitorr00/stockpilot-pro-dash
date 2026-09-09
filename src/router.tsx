@@ -26,7 +26,8 @@ function reloadOnStaleChunk(reason: unknown) {
 }
 
 if (typeof window !== "undefined") {
-  sessionStorage.removeItem(RELOAD_KEY);
+  window.setTimeout(() => sessionStorage.removeItem(RELOAD_KEY), 10000);
+
   window.addEventListener("unhandledrejection", (event) =>
     reloadOnStaleChunk(event.reason),
   );
