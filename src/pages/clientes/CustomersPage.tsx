@@ -33,7 +33,7 @@ import {
   updateCustomer,
   type CustomerInput,
   type CustomerWithStats,
-} from "@/services/mock/customerService";
+} from "@/services/data/customerService";
 import { formatCurrency, formatNumber } from "@/lib/format";
 
 export function CustomersPage() {

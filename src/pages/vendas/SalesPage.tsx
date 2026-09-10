@@ -25,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { cancelSale, createSale, getPosData, type SaleInput } from "@/services/mock/salesService";
+import { cancelSale, createSale, getPosData, type SaleInput } from "@/services/data/salesService";
 import type { PaymentMethod, Product, Sale, SaleItem } from "@/types/business";
 import { formatCurrency, formatNumber } from "@/lib/format";
 

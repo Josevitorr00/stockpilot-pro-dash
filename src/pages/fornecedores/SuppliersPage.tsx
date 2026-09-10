@@ -33,7 +33,7 @@ import {
   updateSupplier,
   type SupplierInput,
   type SupplierWithStats,
-} from "@/services/mock/supplierService";
+} from "@/services/data/supplierService";
 import { formatNumber } from "@/lib/format";
 
 export function SuppliersPage() {

@@ -27,7 +27,7 @@ import {
   type AppSettings,
   type CompanySettings,
   type SystemPreferences,
-} from "@/services/mock/settingsService";
+} from "@/services/data/settingsService";
 
 function initials(name: string) {
   return name

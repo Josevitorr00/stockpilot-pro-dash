@@ -24,7 +24,7 @@ import {
   financeStatuses,
   revenueCategories,
   type FinanceInput,
-} from "@/services/mock/financeService";
+} from "@/services/data/financeService";
 import type { FinanceEntry, FinanceStatus, FinanceType } from "@/types/business";
 import { cn } from "@/lib/utils";
 

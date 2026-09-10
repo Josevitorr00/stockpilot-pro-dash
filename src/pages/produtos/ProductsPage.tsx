@@ -9,7 +9,7 @@ import {
   productCategories,
   updateProduct,
   type ProductInput,
-} from "@/services/mock/productService";
+} from "@/services/data/productService";
 import { SectionCard } from "@/components/dashboard/SectionCard";
 import { ProductsTable } from "@/components/produtos/ProductsTable";
 import { ProductFormDialog } from "@/components/produtos/ProductFormDialog";

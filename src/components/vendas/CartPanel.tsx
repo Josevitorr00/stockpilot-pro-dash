@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { paymentMethods } from "@/services/mock/salesService";
+import { paymentMethods } from "@/services/data/salesService";
 import { formatCurrency } from "@/lib/format";
 
 interface CartPanelProps {

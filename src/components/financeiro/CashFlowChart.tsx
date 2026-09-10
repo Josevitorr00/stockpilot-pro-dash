@@ -9,7 +9,7 @@ import {
   YAxis,
 } from "recharts";
 import { formatCurrency } from "@/lib/format";
-import type { CashFlowPoint } from "@/services/mock/financeService";
+import type { CashFlowPoint } from "@/services/data/financeService";
 
 export function CashFlowChart({ data }: { data: CashFlowPoint[] }) {
   return (

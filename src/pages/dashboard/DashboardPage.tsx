@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { DollarSign, Package, Receipt, ShoppingCart } from "lucide-react";
-import { getDashboardData } from "@/services/mock/dashboardService";
+import { getDashboardData } from "@/services/data/dashboardService";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { SectionCard } from "@/components/dashboard/SectionCard";
 import { SalesChart } from "@/components/dashboard/SalesChart";
