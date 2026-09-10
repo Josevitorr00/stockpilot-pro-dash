@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { getProducts } from "@/services/mock/productService";
+import { getProducts } from "@/services/data/productService";
 import { ThemeToggle } from "./ThemeToggle";
 import { allNavItems } from "./navigation";
 

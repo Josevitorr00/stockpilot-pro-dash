@@ -20,7 +20,7 @@ import {
   getStockOverview,
   registerMovement,
   type StockMovementInput,
-} from "@/services/mock/stockService";
+} from "@/services/data/stockService";
 import { formatCurrency, formatNumber } from "@/lib/format";
 
 export function StockPage() {

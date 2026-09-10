@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { productCategories, type ProductInput } from "@/services/mock/productService";
+import { productCategories, type ProductInput } from "@/services/data/productService";
 import type { Product } from "@/types/business";
 
 interface ProductFormDialogProps {

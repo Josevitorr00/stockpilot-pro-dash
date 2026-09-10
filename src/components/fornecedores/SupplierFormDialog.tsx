@@ -24,7 +24,7 @@ import {
   supplierCategories,
   supplierStatuses,
   type SupplierInput,
-} from "@/services/mock/supplierService";
+} from "@/services/data/supplierService";
 import type { Supplier, SupplierStatus } from "@/types/business";
 import { cn } from "@/lib/utils";
 

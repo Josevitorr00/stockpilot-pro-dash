@@ -33,7 +33,7 @@ import {
   toggleFinanceStatus,
   updateFinanceEntry,
   type FinanceInput,
-} from "@/services/mock/financeService";
+} from "@/services/data/financeService";
 import { formatCurrency } from "@/lib/format";
 import type { FinanceEntry } from "@/types/business";
 

@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { StockMovementInput } from "@/services/mock/stockService";
+import type { StockMovementInput } from "@/services/data/stockService";
 import type { Product, StockMovementType } from "@/types/business";
 
 interface StockMovementDialogProps {

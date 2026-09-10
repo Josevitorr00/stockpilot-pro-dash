@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { customerTypes, type CustomerInput } from "@/services/mock/customerService";
+import { customerTypes, type CustomerInput } from "@/services/data/customerService";
 import type { Customer, CustomerType } from "@/types/business";
 
 interface CustomerFormDialogProps {

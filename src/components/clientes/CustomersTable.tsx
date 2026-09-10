@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatNumber } from "@/lib/format";
-import type { CustomerWithStats } from "@/services/mock/customerService";
+import type { CustomerWithStats } from "@/services/data/customerService";
 
 interface CustomersTableProps {
   customers: CustomerWithStats[];
