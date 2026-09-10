@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import type { PaymentMethod, Product, Sale, SaleItem } from "@/types/business";
 import { currentUserId } from "./session";
 import { getProducts } from "./productService";
@@ -104,7 +105,7 @@ export async function createSale(input: SaleInput): Promise<Sale> {
       user_id: userId,
       code,
       customer: input.customer.trim() || "Consumidor final",
-      items: input.items,
+      items: input.items as unknown as Json,
       subtotal,
       discount,
       total: subtotal - discount,
