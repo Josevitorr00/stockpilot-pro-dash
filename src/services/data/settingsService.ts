@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { currentUserId } from "./session";
 
 export interface CompanySettings {
@@ -73,8 +74,8 @@ async function saveSettings(patch: Partial<AppSettings>) {
   const { error } = await supabase.from("user_settings").upsert(
     {
       user_id: userId,
-      company: next.company,
-      preferences: next.preferences,
+      company: next.company as unknown as Json,
+      preferences: next.preferences as unknown as Json,
     },
     { onConflict: "user_id" },
   );
