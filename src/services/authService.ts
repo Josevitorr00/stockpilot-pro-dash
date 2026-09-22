@@ -75,11 +75,18 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
 }
 
 export async function signIn({ email, password }: Credentials): Promise<AuthSession> {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.trim().toLowerCase(),
-    password,
-  });
-  if (error) throw new Error(translateError(error));
+  let data: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>["data"];
+  try {
+    const result = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+    if (result.error) throw new Error(translateError(result.error));
+    data = result.data;
+  } catch (err) {
+    if (err instanceof Error && !/^[A-Z]?[a-z]*[A-Za-z ]*Error/.test(err.name === "Error" ? "" : err.name)) throw err;
+    throw new Error(translateError(err));
+  }
   const session = await buildSession(data.session);
   if (!session) throw new Error("Não foi possível iniciar a sessão.");
   return session;
