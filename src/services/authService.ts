@@ -10,15 +10,39 @@ interface ProfileRow {
   avatar_url: string | null;
 }
 
-function translateError(message: string): string {
-  const msg = message.toLowerCase();
-  if (msg.includes("invalid login credentials")) return "E-mail ou senha inválidos.";
+function translateError(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const msg = raw.toLowerCase();
+  const status =
+    typeof error === "object" && error !== null && "status" in error
+      ? Number((error as { status?: unknown }).status)
+      : undefined;
+
+  if (msg.includes("invalid login credentials")) return "E-mail ou senha incorretos.";
   if (msg.includes("user already registered") || msg.includes("already been registered"))
     return "Este e-mail já possui uma conta. Faça login.";
   if (msg.includes("password should be at least")) return "A senha deve ter ao menos 6 caracteres.";
   if (msg.includes("email not confirmed")) return "Confirme seu e-mail antes de entrar.";
   if (msg.includes("unable to validate email")) return "Informe um e-mail válido.";
-  return message;
+  if (msg.includes("too many requests") || status === 429)
+    return "Muitas tentativas. Aguarde alguns instantes e tente novamente.";
+
+  // Falha de rede / serviço indisponível (inclui 5xx e erros de borda como 520-530).
+  if (
+    msg.includes("failed to fetch") ||
+    msg.includes("networkerror") ||
+    msg.includes("network request failed") ||
+    msg.includes("load failed") ||
+    msg.includes("fetch failed")
+  )
+    return "Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.";
+
+  if ((status && status >= 500) || /\b5\d\d\b/.test(raw))
+    return "Serviço temporariamente indisponível. Tente novamente em instantes.";
+
+  if (status === 401 || status === 403) return "E-mail ou senha incorretos.";
+
+  return "Não foi possível entrar agora. Tente novamente em instantes.";
 }
 
 async function fetchProfile(userId: string): Promise<ProfileRow | null> {
