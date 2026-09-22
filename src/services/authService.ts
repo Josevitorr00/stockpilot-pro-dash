@@ -10,15 +10,39 @@ interface ProfileRow {
   avatar_url: string | null;
 }
 
-function translateError(message: string): string {
-  const msg = message.toLowerCase();
-  if (msg.includes("invalid login credentials")) return "E-mail ou senha inválidos.";
+function translateError(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const msg = raw.toLowerCase();
+  const status =
+    typeof error === "object" && error !== null && "status" in error
+      ? Number((error as { status?: unknown }).status)
+      : undefined;
+
+  if (msg.includes("invalid login credentials")) return "E-mail ou senha incorretos.";
   if (msg.includes("user already registered") || msg.includes("already been registered"))
     return "Este e-mail já possui uma conta. Faça login.";
   if (msg.includes("password should be at least")) return "A senha deve ter ao menos 6 caracteres.";
   if (msg.includes("email not confirmed")) return "Confirme seu e-mail antes de entrar.";
   if (msg.includes("unable to validate email")) return "Informe um e-mail válido.";
-  return message;
+  if (msg.includes("too many requests") || status === 429)
+    return "Muitas tentativas. Aguarde alguns instantes e tente novamente.";
+
+  // Falha de rede / serviço indisponível (inclui 5xx e erros de borda como 520-530).
+  if (
+    msg.includes("failed to fetch") ||
+    msg.includes("networkerror") ||
+    msg.includes("network request failed") ||
+    msg.includes("load failed") ||
+    msg.includes("fetch failed")
+  )
+    return "Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.";
+
+  if ((status && status >= 500) || /\b5\d\d\b/.test(raw))
+    return "Serviço temporariamente indisponível. Tente novamente em instantes.";
+
+  if (status === 401 || status === 403) return "E-mail ou senha incorretos.";
+
+  return "Não foi possível entrar agora. Tente novamente em instantes.";
 }
 
 async function fetchProfile(userId: string): Promise<ProfileRow | null> {
@@ -51,11 +75,11 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
 }
 
 export async function signIn({ email, password }: Credentials): Promise<AuthSession> {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.trim().toLowerCase(),
-    password,
-  });
-  if (error) throw new Error(translateError(error.message));
+  const result = await supabase.auth
+    .signInWithPassword({ email: email.trim().toLowerCase(), password })
+    .catch((err: unknown) => ({ data: null, error: err }));
+  if (result.error) throw new Error(translateError(result.error));
+  const data = result.data!;
   const session = await buildSession(data.session);
   if (!session) throw new Error("Não foi possível iniciar a sessão.");
   return session;
@@ -71,7 +95,7 @@ export async function signUp({ email, password, name, company }: SignUpPayload):
       data: { name: name.trim(), company: company.trim() },
     },
   });
-  if (error) throw new Error(translateError(error.message));
+  if (error) throw new Error(translateError(error));
   if (data.user && data.user.identities && data.user.identities.length === 0) {
     throw new Error("Este e-mail já possui uma conta. Faça login.");
   }
@@ -89,7 +113,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
     normalized,
     typeof window !== "undefined" ? { redirectTo: `${window.location.origin}/reset-password` } : {},
   );
-  if (error) throw new Error(translateError(error.message));
+  if (error) throw new Error(translateError(error));
 }
 
 export async function updateUserProfile(
@@ -104,7 +128,7 @@ export async function updateUserProfile(
 
   if (updates.email && updates.email.trim().toLowerCase() !== (authUser.email ?? "")) {
     const { error } = await supabase.auth.updateUser({ email: updates.email.trim().toLowerCase() });
-    if (error) throw new Error(translateError(error.message));
+    if (error) throw new Error(translateError(error));
   }
 
   const profilePatch: { name?: string; avatar_url?: string } = {};
