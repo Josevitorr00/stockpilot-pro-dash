@@ -79,7 +79,7 @@ export async function signIn({ email, password }: Credentials): Promise<AuthSess
     email: email.trim().toLowerCase(),
     password,
   });
-  if (error) throw new Error(translateError(error.message));
+  if (error) throw new Error(translateError(error));
   const session = await buildSession(data.session);
   if (!session) throw new Error("Não foi possível iniciar a sessão.");
   return session;
@@ -95,7 +95,7 @@ export async function signUp({ email, password, name, company }: SignUpPayload):
       data: { name: name.trim(), company: company.trim() },
     },
   });
-  if (error) throw new Error(translateError(error.message));
+  if (error) throw new Error(translateError(error));
   if (data.user && data.user.identities && data.user.identities.length === 0) {
     throw new Error("Este e-mail já possui uma conta. Faça login.");
   }
@@ -113,7 +113,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
     normalized,
     typeof window !== "undefined" ? { redirectTo: `${window.location.origin}/reset-password` } : {},
   );
-  if (error) throw new Error(translateError(error.message));
+  if (error) throw new Error(translateError(error));
 }
 
 export async function updateUserProfile(
@@ -128,7 +128,7 @@ export async function updateUserProfile(
 
   if (updates.email && updates.email.trim().toLowerCase() !== (authUser.email ?? "")) {
     const { error } = await supabase.auth.updateUser({ email: updates.email.trim().toLowerCase() });
-    if (error) throw new Error(translateError(error.message));
+    if (error) throw new Error(translateError(error));
   }
 
   const profilePatch: { name?: string; avatar_url?: string } = {};
