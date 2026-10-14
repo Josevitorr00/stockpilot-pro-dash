@@ -74,10 +74,39 @@ export async function getCurrentSession(): Promise<AuthSession | null> {
   return buildSession(data.session);
 }
 
+function isTransientError(error: unknown): boolean {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const msg = raw.toLowerCase();
+  const status =
+    typeof error === "object" && error !== null && "status" in error
+      ? Number((error as { status?: unknown }).status)
+      : undefined;
+  if (status && status >= 500) return true;
+  if (/\b5\d\d\b/.test(raw)) return true;
+  return (
+    msg.includes("failed to fetch") ||
+    msg.includes("fetch failed") ||
+    msg.includes("networkerror") ||
+    msg.includes("load failed") ||
+    msg.includes("retryable")
+  );
+}
+
 export async function signIn({ email, password }: Credentials): Promise<AuthSession> {
-  const result = await supabase.auth
-    .signInWithPassword({ email: email.trim().toLowerCase(), password })
-    .catch((err: unknown) => ({ data: null, error: err }));
+  const attempt = () =>
+    supabase.auth
+      .signInWithPassword({ email: email.trim().toLowerCase(), password })
+      .catch((err: unknown) => ({ data: null, error: err }));
+
+  // Quedas rápidas do serviço são comuns ao reiniciar: tenta de novo antes de mostrar erro.
+  const delays = [1000, 2500, 5000];
+  let result = await attempt();
+  for (const delay of delays) {
+    if (!result.error || !isTransientError(result.error)) break;
+    await new Promise((r) => setTimeout(r, delay));
+    result = await attempt();
+  }
+
   if (result.error) throw new Error(translateError(result.error));
   const data = result.data!;
   const session = await buildSession(data.session);
