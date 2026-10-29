@@ -27,7 +27,8 @@ export function PricingSimulator() {
   const { data: products = [], isLoading, isError } = useQuery({ queryKey: ["products"], queryFn: getProducts });
   const input = Object.fromEntries(Object.entries(form).map(([key, value]) => [key, parseDecimal(value)])) as unknown as PricingInput;
   const fields: (keyof typeof empty)[] = ["cost", "units", ...(mode === "profit" ? ["price" as const] : []), "taxes", "fees", ...(mode === "ideal" ? ["margin" as const] : []), "bales"];
-  const result = calculatePricing(input, mode);
+  const invalidInput = fields.some(key => form[key].trim() && input[key] === null);
+  const result = invalidInput ? null : calculatePricing(input, mode);
   const required = fields.filter(key => key !== "bales");
   const missing = required.some(key => !form[key].trim());
   const percentages = (input.taxes ?? 0) + (input.fees ?? 0) + (mode === "ideal" ? input.margin ?? 0 : 0);

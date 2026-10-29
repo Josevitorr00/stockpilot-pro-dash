@@ -34,7 +34,7 @@ export function calculatePricing(input: PricingInput, mode: "profit" | "ideal") 
   if (sum >= 100 || (input.bales !== null && (!Number.isFinite(input.bales) || input.bales < 0))) return null;
   const divisor = 1 - sum / 100;
   const mathematicalPrice = mode === "ideal" ? cost / divisor : input.price;
-  if (mathematicalPrice === null || !Number.isFinite(mathematicalPrice) || mathematicalPrice <= 0) return null;
+  if (mathematicalPrice === null || !Number.isFinite(mathematicalPrice) || mathematicalPrice < 0 || (mode === "profit" && mathematicalPrice === 0)) return null;
   const price = mode === "ideal" ? roundPriceUp(mathematicalPrice) : mathematicalPrice;
   const taxes = price * (input.taxes ?? 0) / 100;
   const fees = price * (input.fees ?? 0) / 100;
@@ -43,7 +43,7 @@ export function calculatePricing(input: PricingInput, mode: "profit" | "ideal") 
   const totalUnits = input.bales === null ? null : input.bales * (input.units ?? 0);
   return {
     cost, divisor, mathematicalPrice, price, balePrice: price * (input.units ?? 0), taxes, fees, grossProfit, netProfit,
-    effectiveMargin: netProfit / price * 100,
+    effectiveMargin: price === 0 ? 0 : netProfit / price * 100,
     revenue: totalUnits === null ? null : totalUnits * price,
     totalCost: input.bales === null ? null : input.bales * (input.cost ?? 0),
     totalProfit: totalUnits === null ? null : totalUnits * netProfit,
