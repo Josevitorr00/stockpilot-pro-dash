@@ -111,6 +111,7 @@ export type Database = {
         Row: {
           category: string
           cost: number
+          cost_per_bale: number
           created_at: string
           id: string
           min_stock: number
@@ -118,12 +119,15 @@ export type Database = {
           price: number
           sku: string
           stock: number
+          stock_tracked: boolean
+          units_per_bale: number
           updated_at: string
           user_id: string
         }
         Insert: {
           category?: string
           cost?: number
+          cost_per_bale?: number
           created_at?: string
           id?: string
           min_stock?: number
@@ -131,12 +135,15 @@ export type Database = {
           price?: number
           sku?: string
           stock?: number
+          stock_tracked?: boolean
+          units_per_bale?: number
           updated_at?: string
           user_id: string
         }
         Update: {
           category?: string
           cost?: number
+          cost_per_bale?: number
           created_at?: string
           id?: string
           min_stock?: number
@@ -144,6 +151,8 @@ export type Database = {
           price?: number
           sku?: string
           stock?: number
+          stock_tracked?: boolean
+          units_per_bale?: number
           updated_at?: string
           user_id?: string
         }
