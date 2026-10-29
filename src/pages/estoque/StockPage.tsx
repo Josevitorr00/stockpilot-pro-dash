@@ -46,7 +46,7 @@ export function StockPage() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const products = data?.products ?? [];
+  const products = useMemo(() => (data?.products ?? []).filter(product => product.stockTracked), [data?.products]);
   const movements = data?.movements ?? [];
 
   const summary = useMemo(() => {

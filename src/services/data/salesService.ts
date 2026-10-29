@@ -81,7 +81,7 @@ export async function createSale(input: SaleInput): Promise<Sale> {
   for (const item of input.items) {
     const product = products.find((p) => p.id === item.productId);
     if (!product) throw new Error(`Produto ${item.name} não encontrado.`);
-    if (product.stock < item.quantity) {
+    if (product.stockTracked && product.stock < item.quantity) {
       throw new Error(`Estoque insuficiente para ${product.name} (${product.stock} un.).`);
     }
   }
@@ -91,6 +91,7 @@ export async function createSale(input: SaleInput): Promise<Sale> {
   const code = await nextSaleCode(userId);
 
   for (const item of input.items) {
+    if (!products.find(product => product.id === item.productId)?.stockTracked) continue;
     await registerMovement({
       productId: item.productId,
       type: "saida",
