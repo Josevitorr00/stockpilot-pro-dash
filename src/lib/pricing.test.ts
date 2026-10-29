@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { calculatePricing, parseDecimal, roundPriceUp, stockUnits, unitCost, type PricingInput } from "./pricing";
 
 const example: PricingInput = { cost: 60, units: 24, taxes: 4, fees: 2, margin: 30, price: 4, bales: 2 };

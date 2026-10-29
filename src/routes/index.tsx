@@ -4,6 +4,8 @@ import { AuthPage } from "@/pages/auth/AuthPage";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "StockPilot — Controle Inteligente para o seu Comércio" },
       {
         name: "description",
