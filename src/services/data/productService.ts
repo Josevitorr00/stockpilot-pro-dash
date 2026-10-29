@@ -13,6 +13,8 @@ export const productCategories = [
 
 export type ProductInput = Omit<Product, "id">;
 
+export const PRODUCT_COLUMNS = "id,name,sku,category,price,cost,stock,min_stock,cost_per_bale,units_per_bale,stock_tracked";
+
 export interface ProductRow {
   id: string;
   name: string;
@@ -22,6 +24,9 @@ export interface ProductRow {
   cost: number;
   stock: number;
   min_stock: number;
+  cost_per_bale: number;
+  units_per_bale: number;
+  stock_tracked: boolean;
 }
 
 export function mapProduct(row: ProductRow): Product {
@@ -34,6 +39,9 @@ export function mapProduct(row: ProductRow): Product {
     cost: Number(row.cost),
     stock: Number(row.stock),
     minStock: Number(row.min_stock),
+    costPerBale: Number(row.cost_per_bale),
+    unitsPerBale: Number(row.units_per_bale),
+    stockTracked: row.stock_tracked,
   };
 }
 
@@ -41,7 +49,7 @@ export async function getProducts(): Promise<Product[]> {
   const userId = await currentUserId();
   const { data, error } = await supabase
     .from("products")
-    .select("id,name,sku,category,price,cost,stock,min_stock")
+    .select(PRODUCT_COLUMNS)
     .eq("user_id", userId)
     .order("name", { ascending: true });
   if (error) throw new Error(error.message);
@@ -61,8 +69,11 @@ export async function createProduct(input: ProductInput): Promise<Product> {
       cost: input.cost,
       stock: input.stock,
       min_stock: input.minStock,
+      cost_per_bale: input.costPerBale,
+      units_per_bale: input.unitsPerBale,
+      stock_tracked: input.stockTracked,
     })
-    .select("id,name,sku,category,price,cost,stock,min_stock")
+    .select(PRODUCT_COLUMNS)
     .single();
   if (error) throw new Error(error.message);
   return mapProduct(data as ProductRow);
@@ -80,10 +91,13 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Pr
       cost: input.cost,
       stock: input.stock,
       min_stock: input.minStock,
+      cost_per_bale: input.costPerBale,
+      units_per_bale: input.unitsPerBale,
+      stock_tracked: input.stockTracked,
     })
     .eq("id", id)
     .eq("user_id", userId)
-    .select("id,name,sku,category,price,cost,stock,min_stock")
+    .select(PRODUCT_COLUMNS)
     .single();
   if (error) throw new Error(error.message);
   return mapProduct(data as ProductRow);

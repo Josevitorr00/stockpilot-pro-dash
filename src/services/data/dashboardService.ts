@@ -92,7 +92,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     createdAt: sale.createdAt,
   }));
 
-  const stockValue = products.reduce((acc, product) => acc + product.cost * product.stock, 0);
+  const stockValue = products.reduce((acc, product) => acc + (product.stockTracked ? product.cost * product.stock : 0), 0);
 
   return {
     metrics: {
@@ -108,7 +108,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     salesSeries: lastSevenDays,
     categoryShare,
     lowStock: products
-      .filter((product) => product.stock <= product.minStock)
+      .filter((product) => product.stockTracked && product.stock <= product.minStock)
       .sort((a, b) => a.stock / Math.max(a.minStock, 1) - b.stock / Math.max(b.minStock, 1))
       .slice(0, 5),
     recentSales,

@@ -1,23 +1,11 @@
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useEffect, useState, type FormEvent } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { productCategories, type ProductInput } from "@/services/data/productService";
+import { parseDecimal, stockUnits, unitCost } from "@/lib/pricing";
 import type { Product } from "@/types/business";
 
 interface ProductFormDialogProps {
@@ -27,189 +15,41 @@ interface ProductFormDialogProps {
   onSubmit: (values: ProductInput) => void;
   isPending?: boolean;
 }
-
-const emptyForm = {
-  name: "",
-  sku: "",
-  category: productCategories[0] as string,
-  price: "",
-  cost: "",
-  stock: "",
-  minStock: "",
-};
-
+const emptyForm = { name: "", category: productCategories[0] as string, cost: "", units: "", price: "", stock: "" };
 type FormState = typeof emptyForm;
-
-export function ProductFormDialog({
-  open,
-  onOpenChange,
-  product,
-  onSubmit,
-  isPending,
-}: ProductFormDialogProps) {
+export function ProductFormDialog({ open, onOpenChange, product, onSubmit, isPending }: ProductFormDialogProps) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-
   useEffect(() => {
     if (!open) return;
     setErrors({});
-    setForm(
-      product
-        ? {
-            name: product.name,
-            sku: product.sku,
-            category: product.category,
-            price: String(product.price),
-            cost: String(product.cost),
-            stock: String(product.stock),
-            minStock: String(product.minStock),
-          }
-        : emptyForm,
-    );
+    setForm(product ? { name: product.name, category: product.category, cost: String(product.costPerBale), units: String(product.unitsPerBale), price: String(product.price), stock: product.stockTracked ? String(product.stock / product.unitsPerBale) : "" } : emptyForm);
   }, [open, product]);
-
-  function setField(key: keyof FormState, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function handleSubmit(event: React.FormEvent) {
+  function setField(key: keyof FormState, value: string) { setForm(prev => ({ ...prev, [key]: value })); }
+  function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const nextErrors: Partial<Record<keyof FormState, string>> = {};
-    if (!form.name.trim()) nextErrors.name = "Informe o nome do produto.";
-    if (!form.sku.trim()) nextErrors.sku = "Informe o código (SKU).";
-    const price = Number(form.price.replace(",", "."));
-    const cost = Number(form.cost.replace(",", "."));
-    const stock = Number(form.stock);
-    const minStock = Number(form.minStock);
-    if (!Number.isFinite(price) || price <= 0) nextErrors.price = "Preço deve ser maior que zero.";
-    if (!Number.isFinite(cost) || cost < 0) nextErrors.cost = "Custo inválido.";
-    if (!Number.isInteger(stock) || stock < 0) nextErrors.stock = "Quantidade inválida.";
-    if (!Number.isInteger(minStock) || minStock < 0) nextErrors.minStock = "Mínimo inválido.";
-
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
-    onSubmit({
-      name: form.name.trim(),
-      sku: form.sku.trim().toUpperCase(),
-      category: form.category,
-      price,
-      cost,
-      stock,
-      minStock,
-    });
+    const next: Partial<Record<keyof FormState, string>> = {};
+    const cost = parseDecimal(form.cost), units = parseDecimal(form.units), price = parseDecimal(form.price), bales = parseDecimal(form.stock);
+    if (!form.name.trim()) next.name = "Informe o nome do produto.";
+    if (!form.category) next.category = "Selecione a categoria.";
+    if (cost === null || cost < 0) next.cost = "Informe um custo igual ou maior que zero.";
+    if (units === null || !Number.isSafeInteger(units) || units <= 0) next.units = "Informe um número inteiro maior que zero.";
+    if (price === null || price <= 0) next.price = "Informe um preço maior que zero.";
+    const inventory = units === null ? null : stockUnits(bales, units);
+    if (form.stock.trim() && (bales === null || inventory === null)) next.stock = "Informe fardos que correspondam a uma quantidade inteira de unidades.";
+    setErrors(next);
+    const costPerUnit = unitCost(cost, units);
+    if (Object.keys(next).length || cost === null || units === null || price === null || costPerUnit === null) return;
+    onSubmit({ name: form.name.trim(), category: form.category, costPerBale: cost, unitsPerBale: units, price, cost: costPerUnit, stock: inventory ?? product?.stock ?? 0, stockTracked: Boolean(form.stock.trim()), sku: product?.sku ?? "", minStock: product?.minStock ?? 0 });
   }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{product ? "Editar produto" : "Novo produto"}</DialogTitle>
-          <DialogDescription>
-            Preencha os dados do item para manter o catálogo atualizado.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input
-              id="name"
-              value={form.name}
-              onChange={(e) => setField("name", e.target.value)}
-              placeholder="Ex.: Arroz Tipo 1 5kg"
-            />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="sku">Código / SKU</Label>
-              <Input
-                id="sku"
-                value={form.sku}
-                onChange={(e) => setField("sku", e.target.value)}
-                placeholder="ARZ-5KG"
-              />
-              {errors.sku && <p className="text-xs text-destructive">{errors.sku}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoria</Label>
-              <Select value={form.category} onValueChange={(value) => setField("category", value)}>
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {productCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="price">Preço de venda (R$)</Label>
-              <Input
-                id="price"
-                inputMode="decimal"
-                value={form.price}
-                onChange={(e) => setField("price", e.target.value)}
-                placeholder="0,00"
-              />
-              {errors.price && <p className="text-xs text-destructive">{errors.price}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cost">Preço de custo (R$)</Label>
-              <Input
-                id="cost"
-                inputMode="decimal"
-                value={form.cost}
-                onChange={(e) => setField("cost", e.target.value)}
-                placeholder="0,00"
-              />
-              {errors.cost && <p className="text-xs text-destructive">{errors.cost}</p>}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="stock">Estoque atual</Label>
-              <Input
-                id="stock"
-                inputMode="numeric"
-                value={form.stock}
-                onChange={(e) => setField("stock", e.target.value)}
-                placeholder="0"
-              />
-              {errors.stock && <p className="text-xs text-destructive">{errors.stock}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="minStock">Estoque mínimo</Label>
-              <Input
-                id="minStock"
-                inputMode="numeric"
-                value={form.minStock}
-                onChange={(e) => setField("minStock", e.target.value)}
-                placeholder="0"
-              />
-              {errors.minStock && <p className="text-xs text-destructive">{errors.minStock}</p>}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {product ? "Salvar alterações" : "Cadastrar produto"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+  const fields = [ ["cost", "Custo por fardo (R$)"], ["units", "Unidades por fardo"], ["price", "Preço de venda por unidade (R$)"], ["stock", "Estoque (fardos) — opcional"] ] as const;
+  return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+    <DialogHeader><DialogTitle>{product ? "Editar produto" : "Novo produto"}</DialogTitle><DialogDescription>Dados do produto</DialogDescription></DialogHeader>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2"><Label htmlFor="name">Nome do produto</Label><Input id="name" value={form.name} onChange={e => setField("name", e.target.value)} aria-invalid={Boolean(errors.name)} />{errors.name && <p className="text-xs text-destructive">{errors.name}</p>}</div>
+      <div className="space-y-2"><Label htmlFor="category">Categoria</Label><Select value={form.category} onValueChange={value => setField("category", value)}><SelectTrigger id="category"><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{[...new Set([...productCategories, ...(product?.category ? [product.category] : [])])].map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
+      <div className="grid gap-4 sm:grid-cols-2">{fields.map(([key, label]) => <div key={key} className="space-y-2"><Label htmlFor={key}>{label}</Label><Input id={key} inputMode={key === "units" ? "numeric" : "decimal"} value={form[key]} onChange={e => setField(key, e.target.value)} placeholder={key === "stock" ? "Não informado" : ""} aria-invalid={Boolean(errors[key])} />{errors[key] && <p className="text-xs text-destructive">{errors[key]}</p>}</div>)}</div>
+      <DialogFooter><Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button><Button type="submit" disabled={isPending}>{isPending ? "Salvando..." : product ? "Salvar alterações" : "Cadastrar produto"}</Button></DialogFooter>
+    </form>
+  </DialogContent></Dialog>;
 }

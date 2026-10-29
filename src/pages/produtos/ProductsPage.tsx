@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Package, Plus, Search, TriangleAlert } from "lucide-react";
+import { Package, Plus, Search, Boxes } from "lucide-react";
 import { toast } from "sonner";
 import {
   createProduct,
@@ -50,7 +50,7 @@ export function ProductsPage() {
   });
 
   function invalidate() {
-    queryClient.invalidateQueries({ queryKey: ["products"] });
+    for (const key of ["products", "stock", "pos", "dashboard"]) queryClient.invalidateQueries({ queryKey: [key] });
   }
 
   const createMutation = useMutation({
@@ -60,6 +60,7 @@ export function ProductsPage() {
       setFormOpen(false);
       toast.success("Produto cadastrado com sucesso.");
     },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const updateMutation = useMutation({
@@ -69,6 +70,7 @@ export function ProductsPage() {
       setFormOpen(false);
       toast.success("Produto atualizado.");
     },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const deleteMutation = useMutation({
@@ -78,6 +80,7 @@ export function ProductsPage() {
       setDeleting(null);
       toast.success("Produto excluído.");
     },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const filtered = useMemo(() => {
@@ -85,8 +88,7 @@ export function ProductsPage() {
     return (products ?? []).filter((product) => {
       const matchesTerm =
         !term ||
-        product.name.toLowerCase().includes(term) ||
-        product.sku.toLowerCase().includes(term);
+        product.name.toLowerCase().includes(term);
       const matchesCategory = category === "todas" || product.category === category;
       return matchesTerm && matchesCategory;
     });
@@ -96,8 +98,8 @@ export function ProductsPage() {
     const list = products ?? [];
     return {
       total: list.length,
-      lowStock: list.filter((p) => p.stock <= p.minStock).length,
-      stockValue: list.reduce((acc, p) => acc + p.cost * p.stock, 0),
+      tracked: list.filter((p) => p.stockTracked).length,
+      stockValue: list.reduce((acc, p) => acc + (p.stockTracked ? p.cost * p.stock : 0), 0),
     };
   }, [products]);
 
@@ -128,9 +130,9 @@ export function ProductsPage() {
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
-          <p className="text-xs text-muted-foreground">Abaixo do mínimo</p>
+          <p className="text-xs text-muted-foreground">Com estoque informado</p>
           <p className="mt-1 flex items-center gap-2 text-2xl font-semibold text-foreground">
-            <TriangleAlert className="size-5 text-destructive" /> {formatNumber(summary.lowStock)}
+            <Boxes className="size-5 text-destructive" /> {formatNumber(summary.tracked)}
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
@@ -141,14 +143,14 @@ export function ProductsPage() {
         </div>
       </div>
 
-      <SectionCard title="Catálogo" description="Busque por nome ou código e filtre por categoria.">
+      <SectionCard title="Catálogo" >
         <div className="mb-4 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por nome ou SKU"
+              placeholder="Buscar por nome"
               className="pl-9"
               aria-label="Buscar produtos"
             />
@@ -208,7 +210,7 @@ export function ProductsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleting && deleteMutation.mutate(deleting.id)}
+              onClick={(event) => { event.preventDefault(); if (deleting) deleteMutation.mutate(deleting.id); }}
               disabled={deleteMutation.isPending}
             >
               Excluir

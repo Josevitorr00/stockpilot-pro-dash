@@ -7,6 +7,9 @@ export interface Product {
   cost: number;
   stock: number;
   minStock: number;
+  costPerBale: number;
+  unitsPerBale: number;
+  stockTracked: boolean;
 }
 
 export interface SalePoint {

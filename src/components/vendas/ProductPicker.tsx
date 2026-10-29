@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 import type { Product } from "@/types/business";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatCurrency, formatNumber } from "@/lib/format";
 
 interface ProductPickerProps {
@@ -32,14 +33,15 @@ export function ProductPicker({ products, search, onSearchChange, onSelect }: Pr
       ) : (
         <div className="grid max-h-[26rem] grid-cols-2 gap-3 overflow-y-auto pr-1 lg:grid-cols-3">
           {products.map((product) => {
-            const disabled = product.stock <= 0;
+            const disabled = product.stockTracked && product.stock <= 0;
             return (
-              <button
+              <Button
                 key={product.id}
                 type="button"
                 disabled={disabled}
                 onClick={() => onSelect(product)}
-                className="flex flex-col justify-between gap-2 rounded-xl border border-border bg-background p-3 text-left transition hover:border-primary hover:shadow-[var(--shadow-card)] disabled:cursor-not-allowed disabled:opacity-50"
+                variant="outline"
+                className="h-auto items-stretch whitespace-normal flex flex-col justify-between gap-2 rounded-xl border border-border bg-background p-3 text-left transition hover:border-primary hover:shadow-[var(--shadow-card)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{product.name}</p>
@@ -50,10 +52,10 @@ export function ProductPicker({ products, search, onSearchChange, onSelect }: Pr
                     {formatCurrency(product.price)}
                   </span>
                   <Badge variant={disabled ? "destructive" : "secondary"}>
-                    {disabled ? "Sem estoque" : `${formatNumber(product.stock)} un.`}
+                    {!product.stockTracked ? "Sem controle" : disabled ? "Sem estoque" : `${formatNumber(product.stock)} un.`}
                   </Badge>
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

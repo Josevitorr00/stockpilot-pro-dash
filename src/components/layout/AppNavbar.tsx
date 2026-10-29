@@ -41,7 +41,7 @@ export function AppNavbar() {
 
   const { data: products } = useQuery({ queryKey: ["products"], queryFn: getProducts });
   const lowStock = useMemo(
-    () => (products ?? []).filter((p) => p.stock < p.minStock),
+    () => (products ?? []).filter((p) => p.stockTracked && p.stock < p.minStock),
     [products],
   );
 

@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Product, StockMovement, StockMovementType } from "@/types/business";
 import { currentUserId } from "./session";
-import { getProducts, mapProduct, type ProductRow } from "./productService";
+import { getProducts, mapProduct, PRODUCT_COLUMNS, type ProductRow } from "./productService";
 
 export interface StockMovementInput {
   productId: string;
@@ -63,12 +63,13 @@ export async function registerMovement(input: StockMovementInput): Promise<Stock
   const userId = await currentUserId();
   const { data: productRow, error: productError } = await supabase
     .from("products")
-    .select("id,name,sku,category,price,cost,stock,min_stock")
+    .select(PRODUCT_COLUMNS)
     .eq("id", input.productId)
     .eq("user_id", userId)
     .single();
   if (productError || !productRow) throw new Error("Produto não encontrado.");
   const product = mapProduct(productRow as ProductRow);
+  if (!product.stockTracked) throw new Error("Este produto não possui controle de estoque. Informe o estoque na edição do produto para ativá-lo.");
 
   let nextStock = product.stock;
   if (input.type === "entrada") nextStock = product.stock + input.quantity;

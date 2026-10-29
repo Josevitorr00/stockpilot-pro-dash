@@ -113,7 +113,7 @@ export function SalesPage() {
     setItems((current) => {
       const existing = current.find((item) => item.productId === product.id);
       if (existing) {
-        if (existing.quantity >= product.stock) {
+        if (product.stockTracked && existing.quantity >= product.stock) {
           toast.error(`Estoque disponível: ${product.stock} un.`);
           return current;
         }
@@ -141,7 +141,7 @@ export function SalesPage() {
         if (item.productId !== productId) return [item];
         const next = item.quantity + delta;
         if (next <= 0) return [];
-        if (product && next > product.stock) {
+        if (product?.stockTracked && next > product.stock) {
           toast.error(`Estoque disponível: ${product.stock} un.`);
           return [item];
         }
