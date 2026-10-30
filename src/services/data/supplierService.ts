@@ -95,8 +95,8 @@ export async function getSuppliers(): Promise<SupplierWithStats[]> {
       ...supplier,
       stats: {
         products: related.length,
-        lowStock: related.filter((product) => product.stock <= product.minStock).length,
-        stockCost: related.reduce((acc, product) => acc + product.cost * product.stock, 0),
+        lowStock: related.filter((product) => product.stockTracked && product.stock <= product.minStock).length,
+        stockCost: related.reduce((acc, product) => acc + (product.stockTracked ? product.cost * product.stock : 0), 0),
       },
     };
   });
