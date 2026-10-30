@@ -50,7 +50,7 @@ export function ProductsPage() {
   });
 
   function invalidate() {
-    for (const key of ["products", "stock", "pos", "dashboard"]) queryClient.invalidateQueries({ queryKey: [key] });
+    for (const key of ["products", "stock", "pos", "dashboard", "suppliers"]) queryClient.invalidateQueries({ queryKey: [key] });
   }
 
   const createMutation = useMutation({
